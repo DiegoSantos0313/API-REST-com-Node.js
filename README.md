@@ -1,22 +1,59 @@
-# API-REST-com-Node.js
-Desenvolvimento de uma API REST utilizando Node.js e Express para gerenciamento de dados, com operações CRUD integradas a um banco de dados MySQL.
+# UniCoffee Users API
 
-A implementação contempla a criação e o gerenciamento de endpoints para realizar operações de cadastro, consulta, atualização e exclusão de registros. Também foram implementados mecanismos de autenticação com JWT (JSON Web Token) e validação de dados para controlar o acesso e verificar as informações recebidas pela API.
+API REST de usuários e autenticação, construída com Node.js, TypeScript, Express e PostgreSQL.
 
-Os endpoints foram testados utilizando o Postman, permitindo verificar o funcionamento das requisições e das operações disponibilizadas pela aplicação.
+## Requisitos
 
-Principais funcionalidades:
+- Node.js 20 ou superior
+- PostgreSQL 13 ou superior
+- npm
 
-Desenvolvimento de endpoints para gerenciamento de dados.
+## Instalação e configuração
 
-Implementação das operações CRUD (Create, Read, Update e Delete).
+No terminal, entre na pasta `tarefas-app/api` e instale as dependências:
 
-Integração com banco de dados MySQL.
+```bash
+npm install
+```
 
-Autenticação de usuários utilizando JWT.
+Crie um banco PostgreSQL chamado `unicoffe_api` ou escolha outro nome. Copie `.env.example` para `.env` e ajuste `DATABASE_URL` e `JWT_SECRET`. O segredo JWT deve ser privado e ter pelo menos 32 caracteres.
 
-Validação dos dados recebidos pela API.
+Exemplo de URL:
 
-Testes de requisições e endpoints com Postman.
+```text
+postgresql://postgres:sua_senha@localhost:5432/unicoffe_api
+```
 
-Tecnologias e ferramentas utilizadas: Node.js, Express, MySQL, JWT e Postman.
+Execute a migração e inicie o servidor de desenvolvimento:
+
+```bash
+npm run db:migrate
+npm run dev
+```
+
+A API ficará disponível em `http://localhost:3000`. Verifique a conexão com `GET /health`.
+
+## Rotas
+
+| Método | Rota | Autenticação | Descrição |
+|---|---|---|---|
+| POST | `/api/v1/auth/register` | Não | Cria conta e retorna token JWT |
+| POST | `/api/v1/auth/login` | Não | Autentica e retorna token JWT |
+| GET | `/api/v1/auth/me` | Bearer token | Retorna o perfil autenticado |
+| PATCH | `/api/v1/auth/me` | Bearer token | Atualiza o nome do perfil |
+
+Cadastro:
+
+```json
+{
+  "name": "Ana Silva",
+  "email": "ana@example.com",
+  "password": "senha-segura-123"
+}
+```
+
+Envie o token retornado em `Authorization: Bearer <token>` para as rotas protegidas. As senhas são armazenadas com bcrypt e nunca são incluídas nas respostas.
+
+## Produção
+
+Compile com `npm run build` e inicie com `npm start`. Configure variáveis de ambiente seguras; restrinja `CORS_ORIGIN` ao domínio necessário e use HTTPS. Esta versão usa access tokens JWT sem refresh token nem revogação individual.
